@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Payment struct {
-	Id            int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primaryKey"`
+	Id            int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primary_key"`
 	Name          string    `json:"name"`
 	Type          string    `json:"type"`
 	PaymentTypeId int       `json:"payment_type_id"`
@@ -13,7 +13,7 @@ type Payment struct {
 }
 
 type PaymentType struct {
-	Id        int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primaryKey"`
+	Id        int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primary_key"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 }

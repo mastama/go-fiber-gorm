@@ -1,31 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/gofiber/fiber/v2"
+	db "github.com/mastama/go-fiber-gorm/config"
+	route "github.com/mastama/go-fiber-gorm/route"
 )
 
-var DB *gorm.DB
-
 func main() {
+	// call connection to db
+	db.Connect()
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	app := fiber.New()
+	// app.Use(app)
 
-	connection := os.Getenv("DB_URL")
-	db, err := gorm.Open(mysql.Open(connection), &gorm.Config{})
+	route.Setup(app)
 
-	if err != nil {
-		panic("connection db failed!")
-	}
+	app.Listen(":8082")
 
-	DB = db
-	fmt.Println("connection db successfully")
 }

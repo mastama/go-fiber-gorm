@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Discount struct {
-	Id              int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primaryKey"`
+	Id              int       `json:"id" gorm:"type:INT(10) UNSIGNED NOT NULL AUTO_INCREMENT; primary_key"`
 	Qty             int       `json:"qty"`
 	Type            string    `json:"type"`
 	Result          int       `json:"result"`
