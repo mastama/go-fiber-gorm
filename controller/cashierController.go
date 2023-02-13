@@ -62,7 +62,44 @@ func EditCashier(c *fiber.Ctx) error {
 }
 
 func UpdateCashier(c *fiber.Ctx) error {
-	return nil
+	cashierId := c.Params("cashierId")
+	var cashier model.Cashier
+
+	db.DB.Find(&cashier, "id=?", cashierId)
+
+	//validation for checking cashierId
+	if cashier.Name == "" {
+		return c.Status(404).JSON(
+			fiber.Map{
+				"responseCode":    false,
+				"responseMessage": "Cashier not found",
+			})
+	}
+
+	var UpdateCashier model.Cashier
+	err := c.BodyParser(&UpdateCashier)
+	if err != nil {
+		return err
+	}
+
+	if UpdateCashier.Name == "" {
+		return c.Status(404).JSON(
+			fiber.Map{
+				"responseCode":    false,
+				"responseMessage": "Cashier name is required",
+			})
+	}
+
+	cashier.Name = UpdateCashier.Name
+	cashier.Passcode = UpdateCashier.Passcode
+	db.DB.Save(&cashier)
+
+	return c.Status(404).JSON(
+		fiber.Map{
+			"responseCode":    true,
+			"responseMessage": "Success",
+			"data":            cashier,
+		})
 }
 
 func CashiersList(c *fiber.Ctx) error {
@@ -81,9 +118,53 @@ func CashiersList(c *fiber.Ctx) error {
 }
 
 func GetCashierDetails(c *fiber.Ctx) error {
-	return nil
+	cashierId := c.Params("cashierId")
+	var cashier model.Cashier
+
+	db.DB.Select("id, name, created_at, updated_at").Where("id =?", cashierId).First(&cashier)
+
+	cashierData := make(map[string]interface{})
+	cashierData["cashierId"] = cashier.Id
+	cashierData["name"] = cashier.Name
+	cashierData["createdAt"] = cashier.CreatedAt
+	cashierData["updatedAt"] = cashier.UpdatedAt
+
+	//what if there is no cashier or cashier id not provided
+	if cashier.Id == 0 {
+		return c.Status(404).JSON(
+			fiber.Map{
+				"responseCode":    false,
+				"responseMessage": "Cashier not found",
+				"error":           map[string]interface{}{},
+			})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"responseCode":    true,
+		"responseMessage": "success",
+		"data":            cashierData,
+	})
 }
 
 func DeleteCashier(c *fiber.Ctx) error {
-	return nil
+	cashierId := c.Params("cashierId")
+	var cashier model.Cashier
+
+	db.DB.Where("id = ?", cashierId).First(&cashier)
+	// its similar in mysql or sql query like
+	// select * from cashier where id = cashierId and limit 1 etc
+	if cashier.Id == 0 {
+		return c.Status(404).JSON(
+			fiber.Map{
+				"responseCode":    false,
+				"responseMessage": "cashier not found",
+			})
+	}
+
+	db.DB.Where("id = ?", cashierId).Delete(&cashier)
+	return c.Status(404).JSON(
+		fiber.Map{
+			"responseCode":    true,
+			"responseMessage": "Cashier deleted successfully",
+		})
 }
