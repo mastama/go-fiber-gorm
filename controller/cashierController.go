@@ -57,10 +57,6 @@ func CreateCashier(c *fiber.Ctx) error {
 		})
 }
 
-func EditCashier(c *fiber.Ctx) error {
-	return nil
-}
-
 func UpdateCashier(c *fiber.Ctx) error {
 	cashierId := c.Params("cashierId")
 	var cashier model.Cashier
